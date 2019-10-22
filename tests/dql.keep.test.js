@@ -23,13 +23,13 @@ describe('[dql] { keep: true }', () => {
   });
 
   test('should return full object structure', () => {
-    const value = dql(data, { keep: true })` 
-      test { 
-        test2 { 
-          test3 { 
-            test4 { 
+    const value = dql(data, { keep: true })`
+      test {
+        test2 {
+          test3 {
+            test4 {
                test5
-            } 
+            }
           }
         }
       }`;
@@ -38,15 +38,15 @@ describe('[dql] { keep: true }', () => {
   });
 
   test('should works in arrays', () => {
-    const value = dql(data, { keep: true })` 
-      test { 
-        test2 { 
-          test3 { 
-            test4 { 
+    const value = dql(data, { keep: true })`
+      test {
+        test2 {
+          test3 {
+            test4 {
               box {
                 name
               }
-            } 
+            }
           }
         }
       }`;
@@ -71,8 +71,8 @@ describe('[dql] { keep: true }', () => {
 
 
   test('should return key if is not found', () => {
-    const value = dql(data, { keep: true })` 
-      test { 
+    const value = dql(data, { keep: true })`
+      test {
         testdsjj
       }`;
 
@@ -81,16 +81,16 @@ describe('[dql] { keep: true }', () => {
 
 
   test('should filter by key from array', () => {
-    const value = dql(data, { keep: true })` 
-      test { 
-        test2 { 
-          test3 { 
-            test4 { 
+    const value = dql(data, { keep: true })`
+      test {
+        test2 {
+          test3 {
+            test4 {
                box(age: 10) {
                   name,
                   age
                }
-            } 
+            }
           }
         }
       }`;
@@ -113,13 +113,13 @@ describe('[dql] { keep: true }', () => {
   });
 
   test('should rename keys using aliases', () => {
-    const value = dql(data, { keep: true })` 
-      test { 
-        test2 { 
-          test3 { 
-            test4 { 
+    const value = dql(data, { keep: true })`
+      test {
+        test2 {
+          test3 {
+            test4 {
               test5Changed: test5
-            } 
+            }
           }
         }
       }`;
@@ -140,16 +140,16 @@ describe('[dql] { keep: true }', () => {
   });
 
   test('should rename keys using aliases and getting keys', () => {
-    const value = dql(data, { keep: true })` 
-      test { 
-        test2 { 
-          test3 { 
-            test4 { 
+    const value = dql(data, { keep: true })`
+      test {
+        test2 {
+          test3 {
+            test4 {
                newBox: box(age: 10) {
                   name,
                   age
                }
-            } 
+            }
           }
         }
       }`;
@@ -170,5 +170,74 @@ describe('[dql] { keep: true }', () => {
 
     expect(value).toEqual(dataFiltered);
   });
-});
 
+  test('should work with children', () => {
+    const data = {
+      main: {
+        items: [{
+          something: 'yes',
+          cakes: 'yes2',
+        }]
+      },
+      breadcrumbs: [
+        {
+          "name": "Homepage",
+          "url": "//www.blah.com/"
+        }
+      ],
+      regular: {
+        hi: 'hmm',
+        bye: 'hmm2',
+        something: {
+          yes: 'ohyes',
+        }
+      },
+      "debate_only": false,
+      "featured": false,
+    }
+
+    const matchData = {
+      main: {
+        items: [{
+          cakes: 'yes2',
+        }]
+      },
+      breadcrumbs: [
+        {
+          "name": "Homepage",
+        }
+      ],
+      regular: {
+        bye: 'hmm2',
+        something: {
+          yes: 'ohyes',
+        }
+      },
+      "debate_only": false,
+      "featured": false,
+    }
+
+    // so the problem seems to be when you have a regular object
+    // select with another select for a primitive property...
+    const value = dql(data, { keep: true })`
+      main {
+        items {
+          cakes
+        }
+      }
+      breadcrumbs {
+        name
+      }
+      regular {
+        bye
+        something {
+          yes
+        }
+      }
+      featured
+      debate_only
+    `;
+
+    expect(value).toMatchObject(matchData);
+  })
+});

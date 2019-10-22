@@ -67,7 +67,7 @@ function Transform(options, customResolvers) {
    */
 
   let shouldKeep = false;
-  const getChildreansResolved = ({ nodeValue, nodeName, selections, data, props, hasKeep }) => {
+  const getChildrensResolved = ({ nodeValue, nodeName, selections, data, props, hasKeep }) => {
 
     const getFiltered = _.cond([
       [Array.isArray, _.project(props)],
@@ -76,13 +76,22 @@ function Transform(options, customResolvers) {
     ]);
 
     const filtered = getFiltered(nodeValue || []);
+    let lastValue = null;
     lastArrayFiltered = null;
-    return selections.reduce((acc, sel) => {
-      const value = getQueryResolved(sel, lastArrayFiltered || filtered);
 
+    return selections.reduce((acc, sel) => {
+
+      let value;
+      // YES: having this lastValue seems to work instead of the array
       if(options.keep || hasKeep) {
+        value = getQueryResolved(sel, lastValue || filtered);
         shouldKeep = true;
-        return _.assoc(nodeName, value, acc);
+        // Using lastValue seems to fix bug with keep not working on children
+        lastValue = value;
+        const r = _.assoc(nodeName, value, acc);
+        return r;
+      } else {
+        value = getQueryResolved(sel, lastArrayFiltered || filtered);
       }
 
       const { nodeName: selName } = _.ast.getAllProps(sel);
@@ -94,6 +103,11 @@ function Transform(options, customResolvers) {
         _objToGet = { [selName]: valueFromNode };
       } else if(!sel.selectionSet && !_.isNil(valueFromNode)) {
         _objToGet[selName] = valueFromNode;
+      }
+
+      // Using lastValue seems to fix bug with keep not working on children
+      if(!_.equals(value, lastValue)) {
+        lastValue = null;
       }
 
       if(!_.equals(value, lastArrayFiltered)) {
@@ -128,7 +142,7 @@ function Transform(options, customResolvers) {
       return getItemsResolved({ nodeName, props, data: dataResolversApplied, ast })
     }
 
-    return getChildreansResolved({
+    return getChildrensResolved({
       data: dataResolversApplied,
       selections,
       nodeValue,
