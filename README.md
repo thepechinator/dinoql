@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.org/victorvoid/dinoql.svg?branch=master)](https://travis-ci.org/victorvoid/dinoql)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 
-A customizable GraphQL style query language for interacting with JavaScript objects. Use dinoql to traverse JavaScript objects the same way you query APIs with GraphQL. 
+NOTE: the main change in this fork is a fix to get the root keep option working as you'd expect.
+
+A customizable GraphQL style query language for interacting with JavaScript objects. Use dinoql to traverse JavaScript objects the same way you query APIs with GraphQL.
 
 
 **Table of Contents**
@@ -28,7 +30,7 @@ A customizable GraphQL style query language for interacting with JavaScript obje
     - [Last](#last)
     - [Get Prop](#get-prop)
     - [Get Path](#get-path)
-    
+
   - [Building your own resolver](#building-your-own-resolver)
   - [Custom options](#custom-options)
     - [Keep structure](#keep-structure)
@@ -67,7 +69,7 @@ All examples are using this data:
 const data = {
   requests: {
     products: [],
-    
+
     users: [{
       name: 'Victor Igor',
       id: "100",
@@ -77,7 +79,7 @@ const data = {
       id: "200",
       age: 35
     }],
-    
+
     friends: [{
       name: 'Kátia',
       id: "300",
@@ -119,7 +121,7 @@ const users = dinoql(data)`
 console.log(users) //{ users: [{ name: 'Kant Jonas' }] }
 ```
 
-### Aliases - Renaming keys 
+### Aliases - Renaming keys
 
 ```js
 import dinoql from 'dinoql'
@@ -149,7 +151,7 @@ const data = {
     name: 'Paul Gilbert',
     id: "200",
     age: 35
-  }],	
+  }],
 };
 
 const variables = {
@@ -172,9 +174,9 @@ You can create conditions to get a field.
 ```js
 const data = {
   dashboard: {
-    value: '#54'	
+    value: '#54'
   },
-  
+
   name: 'Vic'
 };
 
@@ -182,7 +184,7 @@ const variables = {
   cond: false
 };
 
-const gql = dql(data, { variables })` 
+const gql = dql(data, { variables })`
   dashboard(if: $cond) {
     value
   },
@@ -190,7 +192,7 @@ const gql = dql(data, { variables })`
 }`;
 //{ name: 'Vic' }
 
-const otherGql = dql(data, { variables })` 
+const otherGql = dql(data, { variables })`
   dashboard(unless: $cond) {
     value
   },
@@ -211,7 +213,7 @@ const data = {
       name: {
         text: 'Dinoql'
       },
-      
+
       description: {
         text: 'I am dinoql.'
       }
@@ -266,7 +268,7 @@ const users = dinoql(data)`
   }
 `
 
-console.log(users) 
+console.log(users)
 
 //{ users: [{ name: 'Kant Jonas', age: 35 }, { name: 'Victor Igor', age: 40 }] }
 ```
@@ -284,7 +286,7 @@ const data = {
   }
 }
 
-const variables = { 
+const variables = {
   user: { id: 15, age: 40 }
 }
 
@@ -296,7 +298,7 @@ const users = dinoql(data, { variables })`
   }
 `
 
-console.log(users) 
+console.log(users)
 
 //{ users: [{ age: 10 }, { age: 40 }] }
 ```
@@ -311,7 +313,7 @@ const data = {
   }
 }
 
-const variables = { 
+const variables = {
   user: { age: 40 }
 }
 
@@ -321,7 +323,7 @@ const user = dinoql(data, { variables })`
   }
 `
 
-console.log(user) 
+console.log(user)
 
 //{ user: { id: 10, name: 'Victor Igor', age: 40 } }
 ```
@@ -338,7 +340,7 @@ const users = dinoql(data)`
   }
 `
 
-console.log(users) 
+console.log(users)
 
 // {notfound: "Hello"}
 ```
@@ -445,9 +447,9 @@ import dinoql from 'dinoql'
 const newData = {
   requests: {
     users: { id: 10, name: 'Victor Fellype' },
-    information: { 
-      title: { text: 'my title' }, 
-      description: { text: 'my description' } 
+    information: {
+      title: { text: 'my title' },
+      description: { text: 'my description' }
     }
   }
 };
@@ -509,7 +511,7 @@ const newData = {
 };
 ```
 
-without getPath 
+without getPath
 
 ```js
 const data = dinoql(newData)`
@@ -530,11 +532,11 @@ const socialNetworks = dinoql(newData)`
   requests(getPath: "cms.footer_data.social_networks")
 `
 
-console.log(socialNetworks) 
-/* 
-  { 
-    requests: [ 
-      { name: 'facebook', url: 'facebook.com' }, 
+console.log(socialNetworks)
+/*
+  {
+    requests: [
+      { name: 'facebook', url: 'facebook.com' },
       { name: 'instagram', url: 'instagram.com' }
     ]
   }
@@ -583,11 +585,11 @@ const users = dinoql(data, { keep: true })`
 
 console.log(users)
 /*
-{ 
- requests: { 
-   users: [{ name: 'Kant Jonas' }] 
+{
+ requests: {
+   users: [{ name: 'Kant Jonas' }]
  }
-} 
+}
 */
 ```
 

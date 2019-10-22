@@ -1,6 +1,6 @@
 {
   "name": "tp-dinoql",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A query language for JavaScript Objects using GraphQL syntax.",
   "main": "dist/dinoql.min.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/victorvoid/dinoql.git"
+    "url": "git+https://github.com/thepechinator/dinoql.git"
   },
   "author": "Victor Igor<victor.0w3@gmail.com>",
   "license": "ISC",
